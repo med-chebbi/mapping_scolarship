@@ -12,7 +12,7 @@ import yaml
 
 from .datatypes import normalize_flync_datatype
 from .model import Domain, FlyncElement, FlyncReference, SourceLocation
-from .schema_identity import implied_semantic_identity
+from .schema_identity import CONTROLLER_IDENTITY, ECU_IDENTITY, implied_semantic_identity
 
 
 class FlyncError(RuntimeError):
@@ -97,9 +97,7 @@ class FlyncModel:
         if _document_kind(data) == "system":
             output.append(self._element(file, (), "system", data.get("name", "System"), shared, properties=data))
         if _document_kind(data) == "ecu":
-            from flync.model.flync_4_ecu.ecu import ECU
-
-            external_key = implied_semantic_identity(ECU, self.root / file)
+            external_key = implied_semantic_identity(ECU_IDENTITY, self.root / file)
             ecu_name = data.get("name") or external_key or _content_identity("ecu", data)
             output.append(
                 self._element(
@@ -114,10 +112,8 @@ class FlyncModel:
                 )
             )
         if "controller_metadata" in data:
-            from flync.model.flync_4_ecu.controller import Controller
-
             metadata = data["controller_metadata"] or {}
-            external_key = implied_semantic_identity(Controller, self.root / file)
+            external_key = implied_semantic_identity(CONTROLLER_IDENTITY, self.root / file)
             controller_name = data.get("name") or metadata.get("name") or external_key or _content_identity("controller", metadata)
             output.append(
                 self._element(

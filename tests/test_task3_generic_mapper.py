@@ -15,11 +15,8 @@ from mapping_v3.engine import run_mapping  # noqa: E402
 from mapping_v3.flync import FlyncModel  # noqa: E402
 from mapping_v3.model import Evidence, MatchResult, Status  # noqa: E402
 from mapping_v3.output import write_output  # noqa: E402
-from mapping_v3.schema_identity import implied_semantic_identity  # noqa: E402
+from mapping_v3.schema_identity import CONTROLLER_IDENTITY, ECU_IDENTITY, ImpliedStrategy, implied_semantic_identity  # noqa: E402
 from mapping_v3.status import calculate_status  # noqa: E402
-
-from flync.model.flync_4_ecu.controller import Controller  # noqa: E402
-from flync.model.flync_4_ecu.ecu import ECU  # noqa: E402
 
 ROOT = Path(__file__).resolve().parents[1]
 
@@ -476,8 +473,10 @@ def test_socket_requires_non_port_anchor_and_preserves_context_ambiguity(tmp_pat
 def test_schema_implied_ecu_and_controller_identities_are_preserved(tmp_path):
     ecu_document = tmp_path / "wrapper" / "arbitrary_ecu" / "renamed.flync.yaml"
     controller_document = tmp_path / "elsewhere" / "arbitrary_controller" / "different.flync.yaml"
-    assert implied_semantic_identity(ECU, ecu_document) == "arbitrary_ecu"
-    assert implied_semantic_identity(Controller, controller_document) == "arbitrary_controller"
+    assert ECU_IDENTITY.strategy == ImpliedStrategy.FOLDER_NAME
+    assert CONTROLLER_IDENTITY.strategy == ImpliedStrategy.FOLDER_NAME
+    assert implied_semantic_identity(ECU_IDENTITY, ecu_document) == "arbitrary_ecu"
+    assert implied_semantic_identity(CONTROLLER_IDENTITY, controller_document) == "arbitrary_controller"
 
     root = tmp_path / "workspace"
     write_yaml(root, "one/arbitrary_ecu/renamed.flync.yaml", {"author": "team"})

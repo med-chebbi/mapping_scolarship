@@ -5,7 +5,7 @@ This repository contains the Task 3 ADAS Gateway FLYNC model, its corresponding 
 ## Installation
 
 ```bash
-python -m pip install -e ".[dev]"
+python -m pip install pyyaml==6.0.3 "pytest>=8,<9"
 ```
 
 ## V3
